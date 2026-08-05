@@ -117,39 +117,39 @@ class OverdriveBYDCard extends HTMLElement {
     const p = this.config.entity_prefix;
     const custom = this.config.entities || {};
     const defaults = {
-      battery: `sensor.${p}_soc`,
+      battery: `sensor.${p}_battery_state_of_charge`,
       range: `sensor.${p}_ev_range_km`,
       speed: `sensor.${p}_speed`,
       odometer: `sensor.${p}_odometer`,
       power: `sensor.${p}_power`,
-      outside: `sensor.${p}_ext_temp`,
+      outside: `sensor.${p}_exterior_temperature`,
       inside: `sensor.${p}_inside_temperature`,
-      battery_temp: `sensor.${p}_batt_temp`,
-      soh: `sensor.${p}_soh_oem`,
+      battery_temp: `sensor.${p}_battery_temperature`,
+      soh: `sensor.${p}_state_of_health_oem`,
       capacity: `sensor.${p}_capacity`,
       consumption: `sensor.${p}_consumption_50km`,
       driving_time: `sensor.${p}_driving_time_hours`,
       elevation: `sensor.${p}_elevation`,
       latitude: `sensor.${p}_latitude`,
       longitude: `sensor.${p}_longitude`,
-      last_update: `sensor.${p}_utc`,
-      gear: `sensor.${p}_gear`,
+      last_update: `sensor.${p}_utc_timestamp`,
+      gear: `sensor.${p}_selected_gear`,
       online: `binary_sensor.${p}_network_status`,
-      charging: `binary_sensor.${p}_is_charging`,
-      parked: `binary_sensor.${p}_is_parked`,
-      dcfc: `binary_sensor.${p}_is_dcfc`,
-      key_battery: `binary_sensor.${p}_key_battery`,
-      location: `device_tracker.${p}_location`,
+      charging: `binary_sensor.${p}_charging_status`,
+      parked: `binary_sensor.${p}_parking_status`,
+      dcfc: `binary_sensor.${p}_dc_fast_charging_status`,
+      key_battery: `binary_sensor.${p}_key_battery_low_alert`,
+      location: `device_tracker.${p}_position_tracker`,
 
-      hv_pack_v: `sensor.${p}_hv_pack_v`,
-      cell_v_max: `sensor.${p}_cell_v_max`,
-      cell_v_min: `sensor.${p}_cell_v_min`,
-      cell_v_delta: `sensor.${p}_cell_v_delta`,
-      cell_t_max: `sensor.${p}_cell_t_max`,
-      cell_t_min: `sensor.${p}_cell_t_min`,
-      cell_t_avg: `sensor.${p}_cell_t_avg`,
-      cell_t_delta: `sensor.${p}_cell_t_delta`,
-      volt_12v: `sensor.${p}_volt_12v`,
+      hv_pack_v: `sensor.${p}_hv_pack_voltage`,
+      cell_v_max: `sensor.${p}_cell_voltage_max`,
+      cell_v_min: `sensor.${p}_cell_voltage_min`,
+      cell_v_delta: `sensor.${p}_cell_voltage_delta`,
+      cell_t_max: `sensor.${p}_cell_temp_max`,
+      cell_t_min: `sensor.${p}_cell_temp_min`,
+      cell_t_avg: `sensor.${p}_cell_temp_avg`,
+      cell_t_delta: `sensor.${p}_cell_temp_delta`,
+      volt_12v: `sensor.${p}_12v_battery_voltage`,
       batt_12v_level: `sensor.${p}_batt_12v_level`,
 
       tyre_p_fl: `sensor.${p}_tyre_p_fl`,
@@ -164,17 +164,17 @@ class OverdriveBYDCard extends HTMLElement {
       tyre_temp_state: `sensor.${p}_tyre_temp_state`,
 
       ac_on: `binary_sensor.${p}_ac_on`,
-      ac_cycle: `sensor.${p}_ac_cycle`,
-      ac_wind: `sensor.${p}_ac_wind`,
-      ac_fan: `sensor.${p}_ac_fan`,
+      ac_cycle: `sensor.${p}_ac_cycle_mode`,
+      ac_wind: `sensor.${p}_ac_wind_level`,
+      ac_fan: `sensor.${p}ac_fan_speed`,
       temp_unit: `sensor.${p}_temp_unit`,
 
-      light_low_beam: `binary_sensor.${p}_light_low_beam`,
-      light_high_beam: `binary_sensor.${p}_light_high_beam`,
-      light_rear_fog: `binary_sensor.${p}_light_rear_fog`,
-      light_front_fog: `binary_sensor.${p}_light_front_fog`,
-      light_hazard: `binary_sensor.${p}_light_hazard`,
-      light_drl: `binary_sensor.${p}_light_drl`,
+      light_low_beam: `binary_sensor.${p}_low_beam`,
+      light_high_beam: `binary_sensor.${p}_high_beam`,
+      light_rear_fog: `binary_sensor.${p}_rear_fog_light`,
+      light_front_fog: `binary_sensor.${p}_front_fog_light`,
+      light_hazard: `binary_sensor.${p}_hazard_lights`,
+      light_drl: `binary_sensor.${p}_daytime_running_lights`,
 
       door_lock: `sensor.${p}_door_lock`,
       window_open: `sensor.${p}_window_open`,
@@ -276,7 +276,7 @@ class OverdriveBYDCard extends HTMLElement {
     const speed = this.value("speed", "0");
     const odometer = this.value("odometer", "0");
     const gear = this.value("gear", "P");
-    const online = this.isOn("online");
+    const online = this.isOn("Connected");
     const charging = this.isOn("charging");
     const parked = this.isOn("parked");
     const dcfc = this.isOn("dcfc");
