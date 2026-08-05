@@ -130,7 +130,7 @@ Supports:
 
 Works with the companion integration:
 
-https://github.com/Mackess1/overdrive_byd
+https://github.com/jimbonk2000/overdrive_mqtt
 
 The integration handles:
 
