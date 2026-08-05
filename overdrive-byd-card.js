@@ -276,7 +276,7 @@ class OverdriveBYDCard extends HTMLElement {
     const speed = this.value("speed", "0");
     const odometer = this.value("odometer", "0");
     const gear = this.value("gear", "P");
-    const online = this.isOn("Connected");
+    const online = this.isOn("online");
     const charging = this.isOn("charging");
     const parked = this.isOn("parked");
     const dcfc = this.isOn("dcfc");
@@ -291,7 +291,7 @@ class OverdriveBYDCard extends HTMLElement {
             <div>
               ${show.brand ? `<div class="brand">${this.config.brand}</div>` : ""}
               <div class="title">${this.config.name}</div>
-              <div class="subtitle"><span class="dot ${online ? "on" : "off"}"></span>${online ? "Online" : "Offline"} · ${location}</div>
+              <div class="subtitle"><span class="dot ${online ? "Connected" : "Disconnected"}"></span>${online ? "Online" : "Offline"} · ${location}</div>
             </div>
             <div class="pill ${charging ? "active" : ""}">${charging ? "Charging" : parked ? "Parked" : "Ready"} · ${gear}</div>
           </div>
