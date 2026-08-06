@@ -249,15 +249,15 @@ class OverdriveBYDCard extends HTMLElement {
   
   getVehicleLocation() {
   // Membuat ID entitas sesuai dengan nama kendaraan yang dikonfigurasi
-  const entityId = `sensor.${p}_tyre_system_status_evaluation`;
-  const entity = this._hass.states[entityId];
+  const entityIdXXX = `device_tracker.${p}_position_tracker`;
+  const entityXXX = this._hass.states[entityIdXXX];
 
   // Memastikan entitas ada dan datanya tersedia
-  if (entity) {
+  if (entityXXX) {
     return {
-      latitude: entity.attributes.latitude, // Mengambil koordinat Lat
-      longitude: entity.attributes.longitude, // Mengambil koordinat Lon
-      elevation: entity.attributes.elevation_meters // Mengambil Atribut Ketinggian
+      latitude: entityXXX.attributes.latitude, // Mengambil koordinat Lat
+      longitude: entityXXX.attributes.longitude, // Mengambil koordinat Lon
+      elevation: entityXXX.attributes.elevation_meters // Mengambil Atribut Ketinggian
     };
   }
 
