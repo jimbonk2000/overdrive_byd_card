@@ -118,7 +118,7 @@ class OverdriveBYDCard extends HTMLElement {
     const custom = this.config.entities || {};
     const defaults = {
       battery: `sensor.${p}_battery_state_of_charge`,
-      range: `sensor.${p}_ev_range_km`,
+      range: `sensor.${p}_ev_range`,
       speed: `sensor.${p}_speed`,
       odometer: `sensor.${p}_odometer`,
       power: `sensor.${p}_power`,
@@ -163,23 +163,27 @@ class OverdriveBYDCard extends HTMLElement {
       tyre_system_state: `sensor.${p}_tyre_system_status_evaluation`,
       tyre_temp_state: `sensor.${p}_tyre_temperature_evaluation_flags`,
 
-      ac_on: `binary_sensor.${p}_ac_on`,
+      ac_on: `binary_sensor.${p}_climate_control`,
       ac_cycle: `sensor.${p}_ac_cycle_mode`,
       ac_wind: `sensor.${p}_ac_wind_level`,
-      ac_fan: `sensor.${p}ac_fan_speed`,
-      temp_unit: `sensor.${p}_temp_unit`,
+      ac_fan: `sensor.${p}_ac_fan_speed`,
+      temp_unit: `sensor.${p}_temperature_unit_profile`,
 
-      light_low_beam: `binary_sensor.${p}_low_beam`,
-      light_high_beam: `binary_sensor.${p}_high_beam`,
-      light_rear_fog: `binary_sensor.${p}_rear_fog_light`,
-      light_front_fog: `binary_sensor.${p}_front_fog_light`,
-      light_hazard: `binary_sensor.${p}_hazard_lights`,
-      light_drl: `binary_sensor.${p}_daytime_running_lights`,
+      light_low_beam: `binary_sensor.${p}_headlights_low_beam_active_status`,
+      light_high_beam: `binary_sensor.${p}_headlights_high_beam_active_status`,
+      light_rear_fog: `binary_sensor.${p}_fog_lights_rear_active_status`,
+      light_front_fog: `binary_sensor.${p}_fog_lights_front_active_status`,
+      light_hazard: `binary_sensor.${p}_hazard_emergency_lights_active_status`,
+      light_drl: `binary_sensor.${p}_daytime_running_lights_drl_active_status`,
 
-      door_lock: `sensor.${p}_door_lock`,
-      window_open: `sensor.${p}_window_open`,
-      sunroof_state: `sensor.${p}_sunroof_state`,
-      sunroof_pos: `sensor.${p}_sunroof_pos`,
+      door_lock: `binary_sensor.${p}_door_front_right`,
+      window_open: `binary_sensor.${p}_window_front_right`,
+      window_open_fl: `binary_sensor.${p}_window_front_left`,
+      window_open_fr: `binary_sensor.${p}_window_front_right`,
+      window_open_rl: `binary_sensor.${p}_window_rear_left`,
+      window_open_rr: `binary_sensor.${p}_window_rear_right`,
+      sunroof_state: `binary_sensor.${p}_rear_vent_window_panel`,
+      sunroof_pos: `sensor.${p}_sunshade_position_percentage`,
       seat_heat: `sensor.${p}_seat_heat`,
       seat_cool: `sensor.${p}_seat_cool`,
       seatbelt: `sensor.${p}_seatbelt`,
@@ -205,7 +209,7 @@ class OverdriveBYDCard extends HTMLElement {
 
       ac_button_on: `button.${p}_turn_on_ac`,
       ac_button_off: `button.${p}_turn_off_ac`,
-      lock_entity: `lock.${p}_door_lock`,
+      lock_entity: `lock.${p}_door_front_right`,
       trunk_button: `button.${p}_open_trunk`,
       honk_button: `button.${p}_honk_horn`,
       lights_button: `button.${p}_flash_lights`,
@@ -330,7 +334,7 @@ class OverdriveBYDCard extends HTMLElement {
               ${show.tyres ? this.tyres() : ""}
               ${show.climate ? this.section("Climate", "mdi:air-conditioner", [["AC", acOn ? "On" : "Off"], ["Fan", this.value("ac_fan")], ["Wind", this.value("ac_wind")], ["Cycle", this.value("ac_cycle")]]) : ""}
               ${show.lights ? this.lights() : ""}
-              ${show.body ? this.section("Body", "mdi:car-door", [["Door Lock", this.value("door_lock")], ["Windows", this.value("window_open")], ["Sunroof", this.value("sunroof_state")], ["Sunroof Pos", this.value("sunroof_pos")], ["Seat Heat", this.value("seat_heat")], ["Seat Cool", this.value("seat_cool")]]) : ""}
+              ${show.body ? this.section("Body", "mdi:car-door", [["Door Lock", this.isOn("door_lock")? "Locked" : "Unlocked"], ["Window FR", this.isOn("window_open_fr")? "Closed" : "Open"], ["Sunroof", this.value("sunroof_state")], ["Sunroof Pos", this.value("sunroof_pos")], ["Seat Heat", this.value("seat_heat")], ["Seat Cool", this.value("seat_cool")]]) : ""}
               ${show.charging_detail ? this.section("Charging", "mdi:ev-plug-type2", [["Charging State", this.value("charging_state")], ["Charger State", this.value("charger_state")], ["Mode", this.value("charging_mode")], ["Gun", this.value("charging_gun")], ["Type", this.value("charging_type")], ["V2L", this.isOn("charging_v2l") ? "On" : "Off"], ["DCFC", dcfc ? "On" : "Off"]]) : ""}
               ${show.diagnostics ? this.section("Diagnostics", "mdi:chip", [["Accel", this.fmt("accel_pct", "%")], ["Brake", this.fmt("brake_pct", "%")], ["Steering", this.fmt("steering_deg", "°")], ["Energy Mode", this.value("energy_mode")], ["Op Mode", this.value("op_mode")], ["Power Level", this.value("power_level")], ["MCU", this.value("mcu_status")], ["Radar", this.value("radar_distances")]]) : ""}
               ${show.gps ? this.section("GPS", "mdi:map-marker", [[labels.latitude, this.value("latitude")], [labels.longitude, this.value("longitude")], [labels.elevation, this.fmt("elevation", " m")]]) : ""}
