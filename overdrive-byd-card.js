@@ -311,7 +311,7 @@ class OverdriveBYDCard extends HTMLElement {
     // Menentukan teks tampilan jika data kosong/null
     const latText = vehicleLocation.latitude !== null ? vehicleLocation.latitude.toFixed(6) : 'Unavailable';
     const lonText = vehicleLocation.longitude !== null ? vehicleLocation.longitude.toFixed(6) : 'Unavailable';
-    const elevText = vehicleLocation.elevation !== null ? `${vehicleLocation.elevation.toFixed(1)} m` : 'Unavailable';
+    const elevText = vehicleLocation.elevation !== null ? vehicleLocation.elevation.toFixed(1) : 'Unavailable';
 
 
     this.innerHTML = `
