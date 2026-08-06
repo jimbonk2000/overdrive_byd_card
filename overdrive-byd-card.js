@@ -249,15 +249,16 @@ class OverdriveBYDCard extends HTMLElement {
   
   getVehicleLocation(state) {
       if (!state || state === "unknown" || state === "unavailable") return { latitude: null, longitude: null, elevation: null };
-
-    // Memastikan entitas ada dan datanya tersedia
-    if (state) {
-      return {
-        latitude: state.attributes.latitude, // Mengambil koordinat Lat
-        longitude: state.attributes.longitude, // Mengambil koordinat Lon
-        elevation: state.attributes.elevation_meters // Mengambil Atribut Ketinggian
-      };
-    }
+      const entity = this._hass.states[state];
+      
+        // Memastikan entitas ada dan datanya tersedia
+        if (entity) {
+          return {
+            latitude: entity.attributes.latitude, // Mengambil koordinat Lat
+            longitude: entity.attributes.longitude, // Mengambil koordinat Lon
+            elevation: entity.attributes.elevation_meters // Mengambil Atribut Ketinggian
+          };
+        }
 
     // Mengembalikan nilai default jika entitas belum dimuat atau offline tanpa data
     return { latitude: null, longitude: null, elevation: null };
