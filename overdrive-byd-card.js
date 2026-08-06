@@ -129,9 +129,9 @@ class OverdriveBYDCard extends HTMLElement {
       capacity: `sensor.${p}_capacity`,
       consumption: `sensor.${p}_consumption_50km`,
       driving_time: `sensor.${p}_driving_time_hours`,
-      elevation: `sensor.${p}_elevation`,
-      latitude: `sensor.${p}_latitude`,
-      longitude: `sensor.${p}_longitude`,
+      // elevation: `sensor.${p}_elevation`,
+      // latitude: `sensor.${p}_latitude`,
+      // longitude: `sensor.${p}_longitude`,
       last_update: `sensor.${p}_utc_timestamp`,
       gear: `sensor.${p}_selected_gear`,
       online: `binary_sensor.${p}_network_status`,
@@ -246,6 +246,25 @@ class OverdriveBYDCard extends HTMLElement {
     if (state === "not_home") return "Away";
     return state.charAt(0).toUpperCase() + state.slice(1);
   }
+  
+  getVehicleLocation() {
+  // Membuat ID entitas sesuai dengan nama kendaraan yang dikonfigurasi
+  const entityId = `sensor.${p}_tyre_system_status_evaluation`;
+  const entity = this._hass.states[entityId];
+
+  // Memastikan entitas ada dan datanya tersedia
+  if (entity) {
+    return {
+      latitude: entity.attributes.latitude, // Mengambil koordinat Lat
+      longitude: entity.attributes.longitude, // Mengambil koordinat Lon
+      elevation: entity.attributes.elevation_meters // Mengambil Atribut Ketinggian
+    };
+  }
+
+  // Mengembalikan nilai default jika entitas belum dimuat atau offline tanpa data
+  return { latitude: null, longitude: null, elevation: null };
+}
+
 
   fmt(key, unit = "", fallback = "—") {
     const v = this.value(key, fallback);
@@ -286,6 +305,14 @@ class OverdriveBYDCard extends HTMLElement {
     const dcfc = this.isOn("dcfc");
     const acOn = this.isOn("ac_on");
     const location = this.prettyLocation(this.value("location", "unknown"));
+    // Memanggil fungsi posisi yang dibuat sebelumnya
+    const vehicleLocation = this.getVehicleLocation();
+  
+    // Menentukan teks tampilan jika data kosong/null
+    const latText = vehicleLocation.latitude !== null ? vehicleLocation.latitude.toFixed(6) : 'Unavailable';
+    const lonText = vehicleLocation.longitude !== null ? vehicleLocation.longitude.toFixed(6) : 'Unavailable';
+    const elevText = vehicleLocation.elevation !== null ? `${vehicleLocation.elevation.toFixed(1)} m` : 'Unavailable';
+
 
     this.innerHTML = `
       <ha-card class="obyd-card">
@@ -337,7 +364,7 @@ class OverdriveBYDCard extends HTMLElement {
               ${show.body ? this.section("Body", "mdi:car-door", [["Door Lock", this.isOn("door_lock")? "Unlocked" : "Locked"], ["Window FL", this.isOn("window_open_fl")? "Open" : "Closed"], ["Window FR", this.isOn("window_open_fr")? "Open" : "Closed"], ["Window RR", this.isOn("window_open_rr")? "Open" : "Closed"], ["Window RR", this.isOn("window_open_rr")? "Open" : "Closed"], ["Sunshade", this.isOn("sunroof_state")? "Open" : "Closed"], ["Sunshade Pos", this.value("sunroof_pos")], ["Seat Heat", this.value("seat_heat")], ["Seat Cool", this.value("seat_cool")]]) : ""}
               ${show.charging_detail ? this.section("Charging", "mdi:ev-plug-type2", [["Charging State", this.value("charging_state")], ["Charger State", this.value("charger_state")], ["Mode", this.value("charging_mode")], ["Gun", this.value("charging_gun")], ["Type", this.value("charging_type")], ["V2L", this.isOn("charging_v2l") ? "On" : "Off"], ["DCFC", dcfc ? "On" : "Off"]]) : ""}
               ${show.diagnostics ? this.section("Diagnostics", "mdi:chip", [["Accel", this.fmt("accel_pct", "%")], ["Brake", this.fmt("brake_pct", "%")], ["Steering", this.fmt("steering_deg", "°")], ["Energy Mode", this.value("energy_mode")], ["Op Mode", this.value("op_mode")], ["Power Level", this.value("power_level")], ["MCU", this.value("mcu_status")], ["Radar", this.value("radar_distances")]]) : ""}
-              ${show.gps ? this.section("GPS", "mdi:map-marker", [[labels.latitude, this.value("latitude")], [labels.longitude, this.value("longitude")], [labels.elevation, this.fmt("elevation", " m")]]) : ""}
+              ${show.gps ? this.section("GPS", "mdi:map-marker", [[labels.latitude, this.value("latText")], [labels.longitude, this.value("lonText")], [labels.elevation, this.fmt("elevText", " m")]]) : ""}
               ${show.last_update ? `<div class="last">${labels.last_update}: ${this.value("last_update", "unknown")}</div>` : ""}
             </div>
           </div>` : ""}
