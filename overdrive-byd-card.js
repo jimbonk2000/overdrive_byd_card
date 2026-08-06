@@ -247,23 +247,21 @@ class OverdriveBYDCard extends HTMLElement {
     return state.charAt(0).toUpperCase() + state.slice(1);
   }
   
-  getVehicleLocation() {
-  // Membuat ID entitas sesuai dengan nama kendaraan yang dikonfigurasi
-  const entityIdXXX = `device_tracker.${p}_position_tracker`;
-  const entityXXX = this._hass.states[entityIdXXX];
+  getVehicleLocation(state) {
+      if (!state || state === "unknown" || state === "unavailable") return { latitude: null, longitude: null, elevation: null };
 
-  // Memastikan entitas ada dan datanya tersedia
-  if (entityXXX) {
-    return {
-      latitude: entityXXX.attributes.latitude, // Mengambil koordinat Lat
-      longitude: entityXXX.attributes.longitude, // Mengambil koordinat Lon
-      elevation: entityXXX.attributes.elevation_meters // Mengambil Atribut Ketinggian
-    };
+    // Memastikan entitas ada dan datanya tersedia
+    if (state) {
+      return {
+        latitude: state.attributes.latitude, // Mengambil koordinat Lat
+        longitude: state.attributes.longitude, // Mengambil koordinat Lon
+        elevation: state.attributes.elevation_meters // Mengambil Atribut Ketinggian
+      };
+    }
+
+    // Mengembalikan nilai default jika entitas belum dimuat atau offline tanpa data
+    return { latitude: null, longitude: null, elevation: null };
   }
-
-  // Mengembalikan nilai default jika entitas belum dimuat atau offline tanpa data
-  return { latitude: null, longitude: null, elevation: null };
-}
 
 
   fmt(key, unit = "", fallback = "—") {
@@ -306,7 +304,7 @@ class OverdriveBYDCard extends HTMLElement {
     const acOn = this.isOn("ac_on");
     const location = this.prettyLocation(this.value("location", "unknown"));
     // Memanggil fungsi posisi yang dibuat sebelumnya
-    const vehicleLocation = this.getVehicleLocation();
+    const vehicleLocation = this.getVehicleLocation(this.value("location", "unknown"));
   
     // Menentukan teks tampilan jika data kosong/null
     const latText = vehicleLocation.latitude !== null ? vehicleLocation.latitude.toFixed(6) : 'Unavailable';
